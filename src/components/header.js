@@ -1,78 +1,54 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Container, Row, Col, Navbar, Dropdown } from 'react-bootstrap'
 import { Link, useHistory } from 'react-router-dom'
 import Card from './Card'
 import CustomToggle from './dropdowns'
 import logo from '../assets/images/logo.png';
-import { useAuth0 } from "@auth0/auth0-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faSignInAlt, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import config from '../config'
 import useAuth from "./auth/useAuth";
 import { getDeviceId } from "../shared/utils/getDeviceId";
 import UserApi from "../api/UserApi";
-import { setAuthorizationToken } from '../api/ApiHelper';
 
 const HeaderStyle1 = () => {
 
   const history = useHistory();
   const { user, userId, clearUser } = useAuth();
-  const { logout: logoutAuth0, loginWithRedirect: loginAuth0WithRedirect, isAuthenticated, isAuthLoading, getAccessTokenSilently, user: authUser } = useAuth0();
-  const isUserAuthenticated = config.AUTH0_ENABLED ? isAuthenticated : userId;
-  const { setUser, setAuthToken } = useAuth();
+  const {pathname} = history.location;
+  const isLoginPage = pathname.includes('login');
 
-  useEffect(() => {
-    if (config.AUTH0_ENABLED && !isAuthLoading && isAuthenticated) {
+  console.log('history: ', history);
+  // const isUserAuthenticated = userId;
 
-      getAccessTokenSilently({
-        audience: config.AUTH0_AUDIENCE
-      }).then(token => {
+  // const menuLoggedOutOptions = [
+  //   {
+  //     label: "Login",
+  //     link: "#",
+  //     icon: faSignInAlt,
+  //     onClick: () => {
+  //       handleLogin();
+  //     },
+  //   },
+  //   ...(!config.AUTH0_ENABLED
+  //     ? [{ label: "sign up", link: "/signup", icon: faUser }]
+  //     : []),
+  // ];
 
-        setAuthorizationToken(token);
-        setAuthToken(token);
-      });
-
-      setUser(authUser);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthLoading, isAuthenticated]);
-
-  const menuLoggedOutOptions = [
-    {
-      label: "Login",
-      link: "#",
-      icon: faSignInAlt,
-      onClick: () => {
-        handleLogin();
-      },
-    },
-    // Enable signup only if Auth0 is disabled. Auth0 doesn't provide a way
-    // to redirect directly to the signup page.
-    ...(!config.AUTH0_ENABLED
-      ? [{ label: "sign up", link: "/signup", icon: faUser }]
-      : []),
-  ];
-
-  const menuLoggedInOptions = [
-    ...(!config.AUTH0_ENABLED ? [{ label: "profile", link: "/profile", icon: faUser }] : []),
-    {
-      label: "Logout",
-      link: "#",
-      icon: faSignOutAlt,
-      onClick: () => {
-        handleLogout();
-      },
-    },
-  ];
+  // const menuLoggedInOptions = [
+  //   ...(!config.AUTH0_ENABLED ? [{ label: "profile", link: "/profile", icon: faUser }] : []),
+  //   {
+  //     label: "Logout",
+  //     link: "#",
+  //     icon: faSignOutAlt,
+  //     onClick: () => {
+  //       handleLogout();
+  //     },
+  //   },
+  // ];
 
   const handleLogin = () => {
-    if (config.AUTH0_ENABLED) {
-      loginAuth0WithRedirect({
-        redirect_uri: window.location.origin,
-      });
-    } else {
-      history.push("/login");
-    }
+    history.push("/login");
   };
 
   const handleLogout = async () => {
@@ -80,23 +56,13 @@ const HeaderStyle1 = () => {
       const deviceId = getDeviceId();
       try {
         await UserApi.logout(deviceId);
-
         history.push("/");
         clearUser();
       } catch (err) {
         console.error(err);
       }
     }
-
-    // TODO
-    // Refactor to a single auth function.
-    // The problem is that the `history` object is only
-    // obtainable inside a functional component.
-    if (config.AUTH0_ENABLED) {
-      logoutAuth0({ returnTo: window.location.origin });
-    } else {
-      logoutRequest();
-    }
+    logoutRequest();
   };
 
   return (
@@ -116,8 +82,14 @@ const HeaderStyle1 = () => {
 
                   <div className="navbar-right menu-right">
                     <ul className="d-flex align-items-center list-inline m-0">
-
-                      <Dropdown as="li" className="nav-item nav-icon">
+                      {!isLoginPage && <div
+                        className="user-avatar"
+                        data-toggle="search-toggle"
+                        onClick={() => history.push("/login")}
+                      >
+                        LOGIN
+                      </div>}
+                      {/* <Dropdown as="li" className="nav-item nav-icon">
                         <Dropdown.Toggle href="#" as={CustomToggle} variant="search-toggle">
                           <div 
                             className="user-avatar"
@@ -147,7 +119,7 @@ const HeaderStyle1 = () => {
                             </Card.Body>
                           </Card>
                         </Dropdown.Menu>
-                      </Dropdown>
+                      </Dropdown> */}
                     </ul>
                   </div>
                 </Navbar>

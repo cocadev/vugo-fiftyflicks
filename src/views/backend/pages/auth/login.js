@@ -61,7 +61,7 @@ const Login = () => {
               <div className="sign-user_card ">
                 <div className="sign-in-page-data">
                   <div className="sign-in-from w-100 m-auto">
-                    <h3 className="mb-3 text-center">Sign in</h3>
+                    <h3 className="mb-3 text-center">LOGIN</h3>
                     <Form className="mt-4">
                       <Form.Group>
                         <Form.Control 
@@ -70,7 +70,7 @@ const Login = () => {
                           onChange={e => setEmail(e.target.value)}
                           className="form-control mb-0" 
                           id="exampleInputEmail1" 
-                          placeholder="Enter email" 
+                          placeholder="Code" 
                           autoComplete="off" 
                           required 
                         />
@@ -86,20 +86,20 @@ const Login = () => {
                           required 
                         />
                       </Form.Group>
-                      <div className="sign-info">
+                      <div className="sign-info" style={{ width: '100%', display: 'flex', justifyContent: 'center'}}>
                         <Button className="btn btn-hover btn-primary1" onClick={handleSubmit}>
-                          {loading ? <ButtonSpinner /> : 'Sign in' }
+                          {loading ? <ButtonSpinner /> : 'Log in' }
                         </Button>
-                        <div className="custom-control custom-checkbox d-inline-block">
+                        {/* <div className="custom-control custom-checkbox d-inline-block">
                           <input type="checkbox" className="custom-control-input" id="customCheck" />
                           <label className="custom-control-label" htmlFor="customCheck">Remember Me</label>
-                        </div>
+                        </div> */}
                       </div>
                       {formError && <div style={{ color: 'red'}}>{formError}</div>}
                     </Form>
                   </div>
                 </div>
-                <div className="mt-3">
+                {/* <div className="mt-3">
                   <div className="d-flex justify-content-center links">
                     Don't have an account?
                     <Link to="/signup" className="text-primary ml-2">Sign Up</Link>
@@ -109,7 +109,7 @@ const Login = () => {
                       Forgot your password?
                     </Link>
                   </div>
-                </div>
+                </div> */}
               </div>
             </Col>
           </Row>
